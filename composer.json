@@ -15,7 +15,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Simpletree\\restaurantmenu\\": "src/"
+            "Simpletree\\Restaurantmenu\\": "src/"
         }
     }
 }
