@@ -1,0 +1,22 @@
+{
+    "name": "simpletree/yii2restaurantmenu",
+    "type": "yii2-extension",
+    "require": {
+        "yiisoft/yii2-jui": "*",
+        "yiisoft/yii2": "*"
+    },
+    "description": "Private extension for Yii 2.",
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "Jakob Rosenberg",
+            "email": "jakobrosenberg@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Simpletree\\restaurantmenu\\": "src/"
+        }
+    }
+}
+
