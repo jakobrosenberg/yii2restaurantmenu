@@ -7,9 +7,9 @@ use yii\helpers\Html;
  * @var Simpletree\Restaurantmenu\models\MenuInfo $model
  */
 
-$this->title = 'Update Menu Info: ' . $model->name;
+$this->title = 'Update Menu Info: ' . $model->url;
 $this->params['breadcrumbs'][] = ['label' => 'Menu Infos', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->url, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="menu-info-update">

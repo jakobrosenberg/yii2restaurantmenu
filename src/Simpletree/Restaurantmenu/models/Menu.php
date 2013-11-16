@@ -14,11 +14,13 @@ use yii\db\sqlite\QueryBuilder;
  * @property string $id_site
  * @property boolean $active
  *
- * @property MenuInfo[] $menuInfos
- * @property MenuItem[] $menuItems
+ * @property MenuInfo $info
+ * @property MenuItems[] $items
  */
 class Menu extends \yii\db\ActiveRecord
 {
+    private $_info;
+
     public $language = null;
 
 	/**
@@ -35,12 +37,26 @@ class Menu extends \yii\db\ActiveRecord
 	public function rules()
 	{
 		return [
-            [['id_site'], 'required'],
+            [['url'], 'required'],
+            [['url'], 'homecookedUniqueValidator'],
+//            [['id_site','url'], 'unique', 'attributeName'=>['id_site', 'url']],
             [['active'], 'boolean'],
             [['url'], 'string', 'max' => 32],
-            [['id_site'], 'string', 'max' => 128]
+            [['id_site'], 'string', 'max' => 128],
 		];
 	}
+
+    public function homecookedUniqueValidator()
+    {
+        if($this->isNewRecord && self::findByUrl($this->url))
+            $this->addError('url', 'url must be unique');
+    }
+
+    public static function findByUrl($url, $id_site = false)
+    {
+        $id_site = $id_site ? $id_site : \Yii::$app->site->id_site;
+        return self::find(['id_site'=>$id_site, 'url'=>$url]);
+    }
 
 	/**
 	 * @inheritdoc
@@ -58,22 +74,34 @@ class Menu extends \yii\db\ActiveRecord
 	/**
 	 * @return \yii\db\ActiveRelation
 	 */
-    public function getMenuInfo()
+    public function getInfo()
     {
-        $order = '"da", "en", "de"';
-        $link = ['id_menu' => 'id'];
+        if(!$this->_info)
+        {
+            $order = '"da", "en", "de"';
+            $link = ['id_menu' => 'id'];
 
-        $command = $this->hasOne(MenuInfo::className(), $link)
-            ->orderBy(['FIELD (language, ' . $order . ') ASC, language'=>1])
-            ->createCommand();
+            $command = $this->hasOne(MenuInfo::className(), $link)
+                ->orderBy(['FIELD (language, ' . $order . ') ASC, language'=>1])
+                ->createCommand();
 
-        return $this->hasOne(MenuInfo::className(), $link)
-            ->from(['('.$command->sql.') AS t'])
-            ->addParams($command->params)
-            ->groupBy('id_menu');
+            $info = $this->hasOne(MenuInfo::className(), $link)
+                ->from(['('.$command->sql.') AS t'])
+                ->addParams($command->params)
+                ->groupBy('id_menu')
+                ->one();
+
+            $this->_info = $info;
+        }
+        return $this->_info;
     }
 
-	public function getMenuInfos()
+    public function createNewInfo()
+    {
+        $this->_info = new MenuInfo;
+    }
+
+	public function getInfos()
 	{
         return $this->hasMany(MenuInfo::className(), ['id_menu' => 'id'])
             ->orderBy(['FIELD (language, "da", "en", "de") ASC, language'=>1]);
@@ -84,7 +112,7 @@ class Menu extends \yii\db\ActiveRecord
 	/**
 	 * @return \yii\db\ActiveRelation
 	 */
-	public function getMenuItems()
+	public function getItems()
 	{
 		return $this->hasMany(MenuItem::className(), ['id_menu' => 'id']);
 	}
@@ -106,10 +134,27 @@ class Menu extends \yii\db\ActiveRecord
      */
     public function beforeValidate()
     {
+        if(!$this->info->validate()){
+            return false;
+        }
         if(!$this->id_site){
             $this->id_site = \Yii::$app->params['siteId'];
         }
         return true;
+    }
 
+    public function afterSave($insert)
+    {
+        $this->info->id_menu = $this->id;
+        $this->info->save();
+        parent::afterSave($insert);
+    }
+
+    /**
+     * @param $query ActiveQuery
+     */
+    public static function own($query)
+    {
+        $query->andWhere(['id_site'=>\Yii::$app->site->id_site]);
     }
 }

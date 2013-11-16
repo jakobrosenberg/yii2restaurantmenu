@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
  * @var Simpletree\Restaurantmenu\models\MenuInfo $model
  */
 
-$this->title = $model->name;
+$this->title = $model->info->name;
 $this->params['breadcrumbs'][] = ['label' => 'Menu Infos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -17,8 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
 	<h1><?= Html::encode($this->title) ?></h1>
 
 	<p>
-		<?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-		<?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
+		<?= Html::a('Update', ['update', 'url' => $model->url], ['class' => 'btn btn-primary']) ?>
+		<?php echo Html::a('Delete', ['delete', 'url' => $model->url], [
 			'class' => 'btn btn-danger',
 			'data-confirm' => Yii::t('app', 'Are you sure to delete this item?'),
 			'data-method' => 'post',
@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	</p>
 
 	<?php echo DetailView::widget([
-		'model' => $model,
+		'model' => $model->info,
 		'attributes' => [
 			'id',
 			'id_menu',

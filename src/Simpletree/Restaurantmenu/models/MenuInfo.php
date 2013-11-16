@@ -29,7 +29,7 @@ class MenuInfo extends \yii\db\ActiveRecord
 	public function rules()
 	{
 		return [
-            [['id_menu', 'language', 'name'], 'required'],
+            [['language', 'name'], 'required'],
             [['id_menu'], 'integer'],
             [['description'], 'string'],
             [['language'], 'string', 'max' => 5],
