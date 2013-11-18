@@ -11,21 +11,6 @@ use common\components\LanguageHelper;
  */
 ?>
 
-<?= Html::beginForm(Yii::$app->requestedRoute, 'get', ['id'=>'user-language-form']) ?>
-<?php $language = isset($_REQUEST['language']) ? $_REQUEST['language'] : Yii::$app->site->languageArray[0] ?>
-<?= Html::dropDownList('language', $language, \common\components\LanguageHelper::longArray(Yii::$app->site->languageArray)) ?>
-<?= Html::submitButton() ?>
-<?= Html::endForm() ?>
-
-<?php $this->registerJs('
-
-    var form = $( "#user-language-form" );
-    form.children( "button" ).hide();
-    form.children( "select" ).change(function() {
-        form.submit()
-    });
-') ?>
-
 
 
 
@@ -37,7 +22,7 @@ use common\components\LanguageHelper;
 
         <?= $form->field($model, 'url')->textInput() ?>
 
-        <?= $form->field($model->info, 'language')->textInput(['maxlength' => 5, 'value'=>$language]) ?>
+        <?= $form->field($model->info, 'language')->textInput(['maxlength' => 5]) ?>
 
 		<?= $form->field($model->info, 'name')->textInput(['maxlength' => 255]) ?>
 

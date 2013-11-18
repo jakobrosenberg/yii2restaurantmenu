@@ -76,29 +76,23 @@ class Menu extends \yii\db\ActiveRecord
 	 */
     public function getInfo()
     {
-        if(!$this->_info)
-        {
-            $order = '"da", "en", "de"';
-            $link = ['id_menu' => 'id'];
+        $order = '"da", "en", "de"';
+        $link = ['id_menu' => 'id'];
 
-            $command = $this->hasOne(MenuInfo::className(), $link)
-                ->orderBy(['FIELD (language, ' . $order . ') ASC, language'=>1])
-                ->createCommand();
+        $command = $this->hasOne(MenuInfo::className(), $link)
+            ->orderBy(['FIELD (language, ' . $order . ') ASC, language'=>1])
+            ->createCommand();
 
-            $info = $this->hasOne(MenuInfo::className(), $link)
-                ->from(['('.$command->sql.') AS t'])
-                ->addParams($command->params)
-                ->groupBy('id_menu')
-                ->one();
-
-            $this->_info = $info;
-        }
-        return $this->_info;
+        $info = $this->hasOne(MenuInfo::className(), $link)
+            ->from(['('.$command->sql.') AS t'])
+            ->addParams($command->params)
+            ->groupBy('id_menu');
+        return $info;
     }
 
     public function createNewInfo()
     {
-        $this->_info = new MenuInfo;
+        $this->populateRelation('info', new MenuInfo);
     }
 
 	public function getInfos()
@@ -134,6 +128,10 @@ class Menu extends \yii\db\ActiveRecord
      */
     public function beforeValidate()
     {
+        if(!$this->url){
+            $lowerCasecName = str_to_lower($this->info->name);
+            $this->url = preg_replace('/[^a-z0-9]/', '', $lowerCasecName);
+        }
         if(!$this->info->validate()){
             return false;
         }
@@ -145,8 +143,10 @@ class Menu extends \yii\db\ActiveRecord
 
     public function afterSave($insert)
     {
-        $this->info->id_menu = $this->id;
-        $this->info->save();
+        foreach($this->populatedRelations AS $relation){
+            $relation->id_menu = $this->id;
+            $relation->save();
+        }
         parent::afterSave($insert);
     }
 

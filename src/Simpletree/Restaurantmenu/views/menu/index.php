@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<h1><?= Html::encode($this->title) ?></h1>
 
 	<p>
-		<?= Html::a('Create Menu', ['create'], ['class' => 'btn btn-success']) ?>
+		<?= Html::a('Create Menu', ['create'], ['class' => 'btn btn-success', 'class' => 'create_menu_button']) ?>
 	</p>
 
 	<?php echo ListView::widget([
@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	]); ?>
 
 </div>
+
 
 
 <?php //foreach (\Simpletree\Restaurantmenu\models\MenuInfo::find()

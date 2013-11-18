@@ -7,10 +7,10 @@ use yii\widgets\DetailView;
  * @var yii\web\View $this
  * @var Simpletree\Restaurantmenu\models\MenuInfo $model
  */
-
 $this->title = $model->info->name;
 $this->params['breadcrumbs'][] = ['label' => 'Menu Infos', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="menu-info-view">
 

@@ -97,9 +97,9 @@ class MenuController extends Controller
         $model->createNewInfo();
         $model->info->language = $language;
 
+        print_r($_POST);
 
-
-		if ($model->load($_POST) && $model->save()) {
+		if ($model->load($_POST) && $model->info->load($_POST) && $model->save()) {
             return $this->redirect(['view', 'url' => $model->url]);
 		}else{
             return $this->render('create', [
